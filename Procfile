@@ -1,1 +1,1 @@
-web: java -jar qrnotify-notifications.jar --spring.config.name=application-heroku
+web: java -jar target/qrnotify-notifications.jar --spring.config.name=application-heroku
