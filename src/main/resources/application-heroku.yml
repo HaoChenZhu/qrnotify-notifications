@@ -23,5 +23,6 @@ qrnotify:
     password: ${MQTT_PASSWORD} # Utiliza la variable de entorno MQTT_PASSWORD o 123456789 como predeterminado
     cert: src/main/resources/certifications/emqxsl-ca.crt
   feign:
-    topic: https://qrnotify-topic.herokuapp.com/nebrija/qrnotify-admin
+    topic: https://qrnotify-topic.herokuapp.com/nebrija/qrnotify-topic
+    admin: https://qrnotify-admin.herokuapp.com/nebrija/qrnotify-admin
 
