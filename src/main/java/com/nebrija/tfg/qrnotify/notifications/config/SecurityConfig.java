@@ -24,7 +24,7 @@ public class SecurityConfig {
         return http.cors(Customizer.withDefaults())
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .antMatcher("/nebrija/qrnotify-notifications/user")
+                .antMatcher("/nebrija/qrnotify-notifications/user/**")
                 .addFilterBefore(customJwtRequestFilter, OAuth2LoginAuthenticationFilter.class)
                 .authorizeRequests(authorize -> authorize
                         .anyRequest().authenticated())// validates access tokens as JWTs
@@ -36,14 +36,12 @@ public class SecurityConfig {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests((authorize) -> authorize
-                        .antMatchers("/nebrija/qrnotify-notifications/**","/nebrija/qrnotify-notifications/login", "/swagger-ui/**", "/swagger-resources/**", "/v2/api-docs", "/webjars/**", "/configuration/**")
+                        .antMatchers("/nebrija/qrnotify-notifications/user/**","/nebrija/qrnotify-notifications/test","/nebrija/qrnotify-notifications/login", "/swagger-ui/**", "/swagger-resources/**", "/v2/api-docs", "/webjars/**", "/configuration/**")
                         .permitAll()
                         .anyRequest().authenticated()) // All requests require authentication
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt) // validates access tokens as JWTs
                 .build();
     }
-
-
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

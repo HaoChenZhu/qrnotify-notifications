@@ -66,6 +66,252 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error_dto'
+  /admin/turn:
+    post:
+      tags:
+        - Admin
+      summary: Create turn
+      description: Create turn
+      operationId: createTurn
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/turn_request_dto'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/turn_response_dto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_dto'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_dto'
+        '405':
+          description: Method call not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_dto'
+        '500':
+          description: Internal Server Error QRNotify
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_dto'
+        '503':
+          description: Internal QRNotify storage system error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_dto'
+  /admin/pass-turn:
+    post:
+      tags:
+        - Admin
+      summary: Pass turn
+      description: Pass turn
+      operationId: passTurn
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/turn_request_dto'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/turn_response_dto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_dto'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_dto'
+        '405':
+          description: Method call not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_dto'
+        '500':
+          description: Internal Server Error QRNotify
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_dto'
+        '503':
+          description: Internal QRNotify storage system error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_dto'
+  /user/request-turn:
+    post:
+      tags:
+        - User
+      summary: Request turn
+      description: Request turn
+      operationId: requestTurn
+      parameters:
+        - name: turnId
+          in: query
+          description: turnId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/turn_response_dto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_dto'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_dto'
+        '405':
+          description: Method call not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_dto'
+        '500':
+          description: Internal Server Error QRNotify
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_dto'
+        '503':
+          description: Internal QRNotify storage system error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_dto'
+  /user/turns:
+    get:
+      tags:
+        - User
+      summary: Get turns
+      description: Get turns
+      operationId: getTurns
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/turn_response_dto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_dto'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_dto'
+        '405':
+          description: Method call not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_dto'
+        '500':
+          description: Internal Server Error QRNotify
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_dto'
+        '503':
+          description: Internal QRNotify storage system error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_dto'
+  /user/turn/{turnId}:
+    get:
+      tags:
+        - User
+      summary: Get turn
+      description: Get turn
+      operationId: getTurn
+      parameters:
+        - name: turnId
+          in: path
+          description: turnId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/turn_response_dto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_dto'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_dto'
+        '405':
+          description: Method call not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_dto'
+        '500':
+          description: Internal Server Error QRNotify
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_dto'
+        '503':
+          description: Internal QRNotify storage system error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_dto'
 components:
   schemas:
     general_response:
@@ -110,116 +356,78 @@ components:
       properties:
         error:
           $ref: '#/components/schemas/error'
-    permission_request_dto:
+    client_turn_request_dto:
       type: object
       properties:
-        topic_id:
-          type: string
-          example: "123456789"
-    permission_response_dto:
-      type: object
-      properties:
-        topic_id:
-          type: string
-          description: "id of the topic"
-          example: "123456789"
-        active:
-          type: boolean
-          example: true
-    user_response_dto:
-      type: object
-      properties:
-        name:
+        username:
           type: string
           example: theUser
-        phone_number:
+        phone:
           type: string
           example: '12345'
-        created_date:
+        turn_id:
           type: string
-        modificatied_date:
-          type: string
-        deleted_date:
-          type: string
-    user_request_dto:
+          example: '10'
+    turn_request_dto:
       type: object
       properties:
         name:
           type: string
-          example: "hao"
-        phone_number:
-          type: string
-          example: '615656320'
-    verify_request_dto:
-      type: object
-      properties:
-        name:
-          type: string
-          example: "hao"
-        phone_number:
-          type: string
-          example: '615656320'
-        code:
-          type: string
-          example: '123456'
-    token_response_dto:
-      type: object
-      properties:
-        token:
-          type: string
-          example: "123456789"
-    admin_response_dto:
+          example: theName
+    turn_response_dto:
       type: object
       properties:
         id:
           type: string
-          description: "id of the admin"
-          example: "123456789"
+          example: 10
         name:
           type: string
-          description: "name of the admin"
-          example: "Jhon"
-        email:
+          example: theNameOfTheTurn
+        topic:
           type: string
-          description: "admin email"
-          example: "john@email.com"
-        permissions:
+          example: 10
+        estimated_time:
+          type: number
+          example: '10'
+        current_turn:
+          type: string
+          example: '10'
+        turns:
           type: array
-          description: "permissions of areas"
           items:
-            $ref: '#/components/schemas/permission_response_dto'
+            $ref: '#/components/schemas/client_turn_response_dto'
         created_date:
           type: string
         modificated_date:
           type: string
         deleted_date:
           type: string
-    admin_request_dto:
+        created_by:
+          type: string
+    client_turn_response_dto:
       type: object
       properties:
+        client_id:
+          type: string
+          example: theTurn
+        turn_number:
+          type: string
+          example: theTurnNumber
         name:
           type: string
-          description: "name of the admin"
-          example: "Jhon"
-        email:
+          example: theName
+        phone:
           type: string
-          description: "email"
-          example: "john@email.com"
-        password:
+          example: '12345'
+        status:
           type: string
-          description: "password"
-          example: "1234567"
-    update_admin_request_dto:
-      type: object
-      properties:
-        name:
+          example: theTurnStatus
+        created_date:
           type: string
-          description: "name of the admin"
-          example: "Jhon"
-        password:
+        modificatied_date:
           type: string
-          description: "password"
-          example: "1234567"
+        deleted_date:
+          type: string
     error_dto:
       title: DTO Error
       type: object

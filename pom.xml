@@ -112,6 +112,12 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 		</dependency>
+		<!--TWILIO-->
+		<dependency>
+			<groupId>com.twilio.sdk</groupId>
+			<artifactId>twilio</artifactId>
+			<version>7.55.1</version>
+		</dependency>
 		<!--Feign-->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>

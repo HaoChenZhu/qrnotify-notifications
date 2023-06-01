@@ -1,13 +1,13 @@
 spring:
   data:
     mongodb:
-      uri: mongodb+srv://user:user@cluster0.gw7id.mongodb.net/qrnotify?retryWrites=true&w=majority
+      uri: ${MONGODB_URL}
 server:
   port: 8083
 chen:
   base_path: /nebrija/qrnotify-notifications
 twilio:
-  account_sid:  ${TWILIO_SID}
+  account_sid: ${TWILIO_SID}
   auth_token: ${TWILIO_TOKEN}
   phone_number: ${TWILIO_NUMBER}
 okta:
@@ -21,7 +21,7 @@ qrnotify:
     host: ${MQTT_BROKER_URL} # Utiliza la variable de entorno MQTT_BROKER_URL o ssl://localhost:8883 como predeterminado
     user: ${MQTT_USERNAME} # Utiliza la variable de entorno MQTT_USERNAME o hchenz como predeterminado
     password: ${MQTT_PASSWORD} # Utiliza la variable de entorno MQTT_PASSWORD o 123456789 como predeterminado
-    cert: src/main/resources/certifications/ca.pem
+    cert: src/main/resources/certifications/emqxsl-ca.crt
   feign:
     topic: https://qrnotify-topic.herokuapp.com/nebrija/qrnotify-admin
 
