@@ -40,20 +40,20 @@ public class Controller implements TestApi, AdminApi,UserApi {
     }
 
     @Override
-    public ResponseEntity<ApiTurnResponseDto> createTurn(@ApiParam(value = ""  )  @Valid @RequestBody(required = false) ApiTurnRequestDto apiTurnRequestDto) {
+    public ResponseEntity<ApiTurnResponseDto> createTurn() {
         ApiTurnResponseDto apiTurnResponseDto = notificationPublisher.activateTurn();
         return new ResponseEntity<>(apiTurnResponseDto, HttpStatus.CREATED);
     }
 
     @Override
-    public ResponseEntity<ApiTurnResponseDto> passTurn(ApiTurnRequestDto apiTurnRequestDto) {
-        ApiTurnResponseDto apiTurnResponseDto = notificationPublisher.passTurn(apiTurnRequestDto);
+    public ResponseEntity<ApiTurnResponseDto> passTurn() {
+        ApiTurnResponseDto apiTurnResponseDto = notificationPublisher.passTurn();
         return new ResponseEntity<>(apiTurnResponseDto, HttpStatus.CREATED);
     }
 
     @Override
-    public ResponseEntity<ApiTurnResponseDto> requestTurn(@NotNull @ApiParam(value = "turnId", required = true) @Valid @RequestParam(value = "turnId", required = true) String turnId) {
-        ApiTurnResponseDto  addClientToTurn = notificationPublisher.addClientToTurn(turnId);
+    public ResponseEntity<ApiClientTurnResponseDto> requestTurn(@NotNull @ApiParam(value = "turnId", required = true) @Valid @RequestParam(value = "turnId", required = true) String turnId) {
+        ApiClientTurnResponseDto  addClientToTurn = notificationPublisher.addClientToTurn(turnId);
         return new ResponseEntity<>(addClientToTurn, HttpStatus.CREATED);
     }
 

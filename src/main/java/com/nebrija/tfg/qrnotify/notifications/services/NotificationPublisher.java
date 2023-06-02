@@ -13,10 +13,10 @@ public interface NotificationPublisher {
     // por el nombre del admin y lo activa(creando un nuevo turno en el servicio de notificaciones)
     // una vez activado deberia guardarse en la base de datos para luego recuperrarlo
 
-    ApiTurnResponseDto passTurn(ApiTurnRequestDto apiTurnRequestDto); //Debe actualizar el turno y mandarseloa
+    ApiTurnResponseDto passTurn(); //Debe actualizar el turno y mandarseloa
     // a los clientes que esten suscritos para que sepan que les toca y seguir el estado
 
-    ApiTurnResponseDto addClientToTurn(String turnId);
+    ApiClientTurnResponseDto addClientToTurn(String turnId);
     //añade un cliente a un turno y aqui una duda si notificar a todos los clientes que esten suscritos
     List<ApiTurnResponseDto> getAllTurns(); //devuelve todos los turnos  para la pantalla de usarios
     // del servicio de notificaciones para que puedan ver los turnos que hay y apuntarse a uno

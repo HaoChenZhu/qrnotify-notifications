@@ -66,7 +66,7 @@ public class NotificationPublisherImpl implements NotificationPublisher {
     }
 
     @Override
-    public ApiTurnResponseDto passTurn(ApiTurnRequestDto apiTurnRequestDto){
+    public ApiTurnResponseDto passTurn(){
         String user = authUserService.getCurrentUser();
         Turn turn = turnMongoRepository.findByCreatedBy(user);
 
@@ -131,7 +131,7 @@ public class NotificationPublisherImpl implements NotificationPublisher {
     }
 
     @Override
-    public ApiTurnResponseDto addClientToTurn(String turnId) {
+    public ApiClientTurnResponseDto addClientToTurn(String turnId) {
         //cuando añadimos al cliente no le enviamos a todos los del topico sino solo al que le corresponde
 
         String userPhone = authUserService.getCurrentUser();
@@ -166,11 +166,11 @@ public class NotificationPublisherImpl implements NotificationPublisher {
         apiClientTurnResponseDto.setName(apiUserResponseDto.getName());*/
         turn.getClientTurnList().add(clientTurn);
         turnMongoRepository.save(turn);
-        ApiTurnResponseDto apiTurnResponseDto = turnMapper.toDto(turn); //Falta actualizar el estimated time
+        //Falta actualizar el estimated time
 
         smService.sendSms(userPhone, userTurnNumber + " en " + turn.getName());
 
-        return apiTurnResponseDto;
+        return apiClientTurnResponseDto;
     }
 
     @Override

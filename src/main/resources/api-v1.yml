@@ -73,11 +73,6 @@ paths:
       summary: Create turn
       description: Create turn
       operationId: createTurn
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/turn_request_dto'
       responses:
         '200':
           description: Successful operation
@@ -122,11 +117,6 @@ paths:
       summary: Pass turn
       description: Pass turn
       operationId: passTurn
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/turn_request_dto'
       responses:
         '200':
           description: Successful operation
@@ -184,7 +174,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/turn_response_dto'
+                $ref: '#/components/schemas/client_turn_response_dto'
         '400':
           description: Bad Request
           content:
@@ -413,18 +403,12 @@ components:
         turn_number:
           type: string
           example: theTurnNumber
-        name:
-          type: string
-          example: theName
-        phone:
-          type: string
-          example: '12345'
         status:
           type: string
           example: theTurnStatus
         created_date:
           type: string
-        modificatied_date:
+        modificated_date:
           type: string
         deleted_date:
           type: string

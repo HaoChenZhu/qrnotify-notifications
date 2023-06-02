@@ -17,7 +17,7 @@ public class MqttServiceImpl implements MqttService {
     }
 
     @Override
-    public String disconnect(String clientId) {
-        return null;
+    public void disconnect() {
+        client.disconnect();
     }
 }
