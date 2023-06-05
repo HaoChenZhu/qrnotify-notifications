@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "${chen.base_path}")
-public class Controller implements TestApi, AdminApi,UserApi {
+public class Controller implements TestApi, AdminApi,UserApi, TurnApi {
 
     @Autowired
     private NotificationPublisher notificationPublisher;

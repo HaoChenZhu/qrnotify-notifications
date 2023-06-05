@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests((authorize) -> authorize
-                        .antMatchers("/nebrija/qrnotify-notifications/user/**","/nebrija/qrnotify-notifications/test", "/swagger-ui/**", "/swagger-resources/**", "/v2/api-docs", "/webjars/**", "/configuration/**")
+                        .antMatchers("/nebrija/qrnotify-notifications/user/**","/nebrija/qrnotify-notifications/test","/nebrija/qrnotify-notifications/turn/**", "/swagger-ui/**", "/swagger-resources/**", "/v2/api-docs", "/webjars/**", "/configuration/**")
                         .permitAll()
                         .anyRequest().authenticated()) // All requests require authentication
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt) // validates access tokens as JWTs

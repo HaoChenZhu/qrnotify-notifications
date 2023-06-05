@@ -251,7 +251,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error_dto'
-  /user/turn/{turnId}:
+  /turn/{turnId}:
     get:
       tags:
         - User

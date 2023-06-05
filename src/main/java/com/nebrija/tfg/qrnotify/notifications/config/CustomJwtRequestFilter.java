@@ -8,6 +8,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -19,12 +20,12 @@ public class CustomJwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String path = request.getRequestURI();
         // Si la ruta no contien /user, ignora esta petición y pasa al siguiente filtro
-        if (!path.contains("/user") || path.contains("/turn")) {
+        if (!path.contains("/user")) {
             System.out.println("No es una petición a /user, se ignora");
             filterChain.doFilter(request, response);
             return;
         }
-
+        System.out.println("Es una petición a /user, se procesa");
         final String authorizationHeader = request.getHeader("Authorization");
 
         String username = null;
