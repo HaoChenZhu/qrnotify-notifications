@@ -52,6 +52,9 @@ public class NotificationPublisherImpl implements NotificationPublisher {
 
     @Override
     public ApiTurnResponseDto activateTurn() {
+        if(turnMongoRepository.existsTurnToDayAndUser(authUserService.getCurrentUser())) {
+            throw new IllegalArgumentException("Ya existe un turno activo para el usuario actual");
+        }
         ApiTopicResponseDto apiTopicResponseDto = topicClientImpl.getTopicByOwner(authUserService.getCurrentUser());
         Turn turn = Turn.builder()
                 .name(apiTopicResponseDto.getName())
@@ -97,11 +100,10 @@ public class NotificationPublisherImpl implements NotificationPublisher {
         turnMongoRepository.save(turn);
         ApiTurnResponseDto apiTurnResponseDto = turnMapper.toDto(turn);
 
-        //enviar a los cliente suscritos
         ObjectMapper mapper = new ObjectMapper();
         try {
             String json = mapper.writeValueAsString(apiTurnResponseDto);
-            mqttService.publish(apiTurnResponseDto.getTopic(),json,2,1000L);
+            mqttService.publish(apiTurnResponseDto.getTopic(),json,1,1000L);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -185,4 +187,6 @@ public class NotificationPublisherImpl implements NotificationPublisher {
         ApiTurnResponseDto apiTurnResponseDto=turnMapper.toDto(turn);
         return apiTurnResponseDto;
     }
+
+
 }

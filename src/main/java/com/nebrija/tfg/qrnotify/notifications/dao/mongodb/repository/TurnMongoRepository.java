@@ -16,6 +16,8 @@ public interface TurnMongoRepository {
 
     Turn findByCreatedBy(String createdBy);
 
+    boolean existsTurnToDayAndUser(String createdBy);
+
 
 
 

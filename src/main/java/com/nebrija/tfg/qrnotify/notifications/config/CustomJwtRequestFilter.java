@@ -19,7 +19,7 @@ public class CustomJwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String path = request.getRequestURI();
         // Si la ruta no contien /user, ignora esta petición y pasa al siguiente filtro
-        if (!path.contains("/user")) {
+        if (!path.contains("/user") || path.contains("/turn")) {
             System.out.println("No es una petición a /user, se ignora");
             filterChain.doFilter(request, response);
             return;
