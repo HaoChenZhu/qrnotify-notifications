@@ -18,12 +18,14 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "${chen.base_path}")
-public class Controller implements TestApi, AdminApi,UserApi, TurnApi {
+public class Controller implements TestApi, AdminApi, UserApi, TurnApi {
 
     @Autowired
     private NotificationPublisher notificationPublisher;
+
     @Autowired
     private AdminClientImpl adminClient;
+
     @Override
     public Optional<NativeWebRequest> getRequest() {
         return TestApi.super.getRequest();
@@ -32,7 +34,7 @@ public class Controller implements TestApi, AdminApi,UserApi, TurnApi {
     @Override
     @GetMapping("/test")
     public ResponseEntity<ApiGeneralResponse> test() {
-        List< ApiUserResponseDto> users = adminClient.getAllUsers();
+        List<ApiUserResponseDto> users = adminClient.getAllUsers();
         System.out.println(users);
         ApiGeneralResponse generalResponse = new ApiGeneralResponse();
         generalResponse.setMessage("Test OK");
@@ -53,7 +55,7 @@ public class Controller implements TestApi, AdminApi,UserApi, TurnApi {
 
     @Override
     public ResponseEntity<ApiClientTurnResponseDto> requestTurn(@NotNull @ApiParam(value = "turnId", required = true) @Valid @RequestParam(value = "turnId", required = true) String turnId) {
-        ApiClientTurnResponseDto  addClientToTurn = notificationPublisher.addClientToTurn(turnId);
+        ApiClientTurnResponseDto addClientToTurn = notificationPublisher.addClientToTurn(turnId);
         return new ResponseEntity<>(addClientToTurn, HttpStatus.CREATED);
     }
 
@@ -64,8 +66,8 @@ public class Controller implements TestApi, AdminApi,UserApi, TurnApi {
     }
 
     @Override
-    public ResponseEntity<ApiTurnResponseDto> getTurn(@ApiParam(value = "turnId",required=true) @PathVariable("turnId") String turnId) {
+    public ResponseEntity<ApiTurnResponseDto> getTurn(@ApiParam(value = "turnId", required = true) @PathVariable("turnId") String turnId) {
         ApiTurnResponseDto turn = notificationPublisher.getTurn(turnId);
         return new ResponseEntity<>(turn, HttpStatus.OK);
     }
-    }
+}

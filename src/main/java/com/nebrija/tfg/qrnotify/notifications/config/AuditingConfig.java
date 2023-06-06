@@ -8,7 +8,6 @@ import org.springframework.data.mongodb.config.EnableMongoAuditing;
 @Configuration
 @EnableMongoAuditing
 public class AuditingConfig {
-
     @Bean
     public AuditorAware<String> myAuditorProvider() {
         return new AuditorAwareImpl();

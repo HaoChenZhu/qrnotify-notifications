@@ -11,7 +11,6 @@ public class AuthUserServiceImpl implements AuthUserService {
     @Override
     public String getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(authentication.getDetails());
         if (authentication != null && authentication.isAuthenticated()) {
             return authentication.getName();
         } else {

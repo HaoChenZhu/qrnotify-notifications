@@ -10,7 +10,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -18,6 +17,7 @@ public class TurnMongoRepositoryImpl implements TurnMongoRepository {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
     @Override
     public Turn findBy_Id(String _id) {
         ObjectId id = new ObjectId(_id);
@@ -32,8 +32,6 @@ public class TurnMongoRepositoryImpl implements TurnMongoRepository {
 
     @Override
     public List<Turn> findAll() {
-        //find all turns from today
-
         List<Turn> turns = mongoTemplate.findAll(Turn.class);
         return turns;
     }
@@ -41,11 +39,6 @@ public class TurnMongoRepositoryImpl implements TurnMongoRepository {
     @Override
     public List<Turn> findByCreatedDate() {
         LocalDate currentDate = LocalDate.now();
-
-        // Convertir la fecha actual a un objeto Date de Java
-        Date today = java.sql.Date.valueOf(currentDate);
-
-        // Construir la consulta
         Query query = new Query(Criteria.where("createdDate").gte(currentDate.atStartOfDay()).lt(currentDate.plusDays(1).atStartOfDay()));
 
         return mongoTemplate.find(query, Turn.class);

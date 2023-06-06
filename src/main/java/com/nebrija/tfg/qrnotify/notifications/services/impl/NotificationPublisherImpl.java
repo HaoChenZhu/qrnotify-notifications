@@ -7,9 +7,10 @@ import com.nebrija.tfg.qrnotify.notifications.clients.impl.TopicClientImpl;
 import com.nebrija.tfg.qrnotify.notifications.dao.mongodb.entities.ClientTurn;
 import com.nebrija.tfg.qrnotify.notifications.dao.mongodb.entities.Turn;
 import com.nebrija.tfg.qrnotify.notifications.dao.mongodb.repository.TurnMongoRepository;
+import com.nebrija.tfg.qrnotify.notifications.exceptions.ApiResourceNotFoundException;
+import com.nebrija.tfg.qrnotify.notifications.exceptions.ServerErrorException;
 import com.nebrija.tfg.qrnotify.notifications.mappers.TurnMapper;
 import com.nebrija.tfg.qrnotify.notifications.model.api.ApiClientTurnResponseDto;
-import com.nebrija.tfg.qrnotify.notifications.model.api.ApiTurnRequestDto;
 import com.nebrija.tfg.qrnotify.notifications.model.api.ApiTurnResponseDto;
 import com.nebrija.tfg.qrnotify.notifications.models.ApiUserResponseDto;
 import com.nebrija.tfg.qrnotify.notifications.services.AuthUserService;
@@ -52,46 +53,50 @@ public class NotificationPublisherImpl implements NotificationPublisher {
 
     @Override
     public ApiTurnResponseDto activateTurn() {
-        if(turnMongoRepository.existsTurnToDayAndUser(authUserService.getCurrentUser())) {
-            throw new IllegalArgumentException("Ya existe un turno activo para el usuario actual");
+        try {
+            if (turnMongoRepository.existsTurnToDayAndUser(authUserService.getCurrentUser())) {
+                throw new IllegalArgumentException("Ya existe un turno activo para el usuario actual");
+            }
+            ApiTopicResponseDto apiTopicResponseDto = topicClientImpl.getTopicByOwner(authUserService.getCurrentUser());
+            Turn turn = Turn.builder()
+                    .name(apiTopicResponseDto.getName())
+                    .topicId(apiTopicResponseDto.getId())
+                    .publishName(apiTopicResponseDto.getPublishName())
+                    .estimatedTime(0)
+                    .clientTurnList(Collections.emptyList())
+                    .build();
+            turnMongoRepository.save(turn);
+            ApiTurnResponseDto apiTurnResponseDto = turnMapper.toDto(turn);
+            return apiTurnResponseDto;
+        } catch (Exception e) {
+            throw new ServerErrorException(e.getMessage());
         }
-        ApiTopicResponseDto apiTopicResponseDto = topicClientImpl.getTopicByOwner(authUserService.getCurrentUser());
-        Turn turn = Turn.builder()
-                .name(apiTopicResponseDto.getName())
-                .topicId(apiTopicResponseDto.getId())
-                .publishName(apiTopicResponseDto.getPublishName())
-                .estimatedTime(0)
-                .clientTurnList(Collections.emptyList())
-                .build();
-        turnMongoRepository.save(turn);
-        ApiTurnResponseDto apiTurnResponseDto = turnMapper.toDto(turn);
-        return apiTurnResponseDto;
     }
 
     @Override
-    public ApiTurnResponseDto passTurn(){
+    public ApiTurnResponseDto passTurn() {
         String user = authUserService.getCurrentUser();
         Turn turn = turnMongoRepository.findByCreatedBy(user);
 
         if (turn == null) {
-            throw new IllegalArgumentException("No existe turno activo");
+            throw new ApiResourceNotFoundException("No existe turno activo");
         }
 
         List<ClientTurn> clientTurnList = new ArrayList<>(turn.getClientTurnList());
 
         if (clientTurnList.isEmpty()) {
-            throw new IllegalArgumentException("No hay clientes en la cola");
+            throw new ApiResourceNotFoundException("No hay clientes en la cola");
         }
 
         ClientTurn currentClientTurn = findCurrentClientTurn(clientTurnList, turn.getCurrentTurn());
 
-        if(currentClientTurn != null) {
+        if (currentClientTurn != null) {
             updateTurnStatusAndSaveInList(clientTurnList, currentClientTurn, Constants.STATUS.COMPLETADO.toString());
         }
 
         ClientTurn nextClientTurn = findNextClientTurn(clientTurnList);
 
-        if(nextClientTurn != null) {
+        if (nextClientTurn != null) {
             updateTurnStatusAndSaveInList(clientTurnList, nextClientTurn, Constants.STATUS.EN_CURSO.toString());
             turn.setCurrentTurn(nextClientTurn.getTurnNumber());
         }
@@ -103,7 +108,7 @@ public class NotificationPublisherImpl implements NotificationPublisher {
         ObjectMapper mapper = new ObjectMapper();
         try {
             String json = mapper.writeValueAsString(apiTurnResponseDto);
-            mqttService.publish(apiTurnResponseDto.getTopic(),json,1,1000L);
+            mqttService.publish(apiTurnResponseDto.getTopic(), json, 1, 1000L);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -134,10 +139,7 @@ public class NotificationPublisherImpl implements NotificationPublisher {
 
     @Override
     public ApiClientTurnResponseDto addClientToTurn(String turnId) {
-        //cuando añadimos al cliente no le enviamos a todos los del topico sino solo al que le corresponde
-
         String userPhone = authUserService.getCurrentUser();
-        System.out.println("userPhone: " + userPhone);
         Turn turn = turnMongoRepository.findBy_Id(turnId);
         if (turn == null) {
             throw new IllegalArgumentException("No existe turno activo");
@@ -164,11 +166,9 @@ public class NotificationPublisherImpl implements NotificationPublisher {
                 .createdDate(LocalDateTime.now())
                 .build();
         ApiClientTurnResponseDto apiClientTurnResponseDto = turnMapper.toDtoClient(clientTurn);
-        /*apiClientTurnResponseDto.setPhone(apiUserResponseDto.getPhoneNumber());
-        apiClientTurnResponseDto.setName(apiUserResponseDto.getName());*/
+
         turn.getClientTurnList().add(clientTurn);
         turnMongoRepository.save(turn);
-        //Falta actualizar el estimated time
 
         smService.sendSms(userPhone, userTurnNumber + " en " + turn.getName());
 
@@ -177,15 +177,29 @@ public class NotificationPublisherImpl implements NotificationPublisher {
 
     @Override
     public List<ApiTurnResponseDto> getAllTurns() {
-        List<Turn> listTurn=turnMongoRepository.findByCreatedDate();
-        return turnMapper.fromEntitiesToDtos(listTurn);
+        try {
+            List<Turn> listTurn = turnMongoRepository.findByCreatedDate();
+            if (listTurn.isEmpty()) {
+                throw new ApiResourceNotFoundException("No hay turnos activos para el usuario actual");
+            }
+            return turnMapper.fromEntitiesToDtos(listTurn);
+        } catch (Exception e) {
+            throw new ServerErrorException(e.getMessage());
+        }
     }
 
     @Override
     public ApiTurnResponseDto getTurn(String identifier) {
-        Turn turn=turnMongoRepository.findBy_Id(identifier);
-        ApiTurnResponseDto apiTurnResponseDto=turnMapper.toDto(turn);
-        return apiTurnResponseDto;
+        try {
+            Turn turn = turnMongoRepository.findBy_Id(identifier);
+            if (turn == null) {
+                throw new ApiResourceNotFoundException("No existe turno activo");
+            }
+            ApiTurnResponseDto apiTurnResponseDto = turnMapper.toDto(turn);
+            return apiTurnResponseDto;
+        } catch (Exception e) {
+            throw new ServerErrorException(e.getMessage());
+        }
     }
 
 

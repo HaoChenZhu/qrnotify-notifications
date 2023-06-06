@@ -1,16 +1,13 @@
 package com.nebrija.tfg.qrnotify.notifications.config;
 
-
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.eclipse.paho.mqttv5.client.*;
 import org.eclipse.paho.mqttv5.client.persist.MemoryPersistence;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
 import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
@@ -73,7 +70,6 @@ public class MqttBeans {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             e.printStackTrace();
-
         }
     }
     public String getClientId() {
@@ -104,8 +100,6 @@ public class MqttBeans {
             mqttProperties.setMessageExpiryInterval(expirationTime);
             mqttMessage.setProperties(mqttProperties);
             mqttAsyncClient.publish(topic, mqttMessage);
-            //Wait for the publish to complete
-            //token.waitForCompletion();
             log.info("Publicado en topic: " + topic);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -130,7 +124,6 @@ public class MqttBeans {
         try {
             Security.addProvider(new BouncyCastleProvider());
 
-            // load CA certificate
             X509Certificate caCert = null;
             InputStream fis = new FileInputStream(caFile);
             BufferedInputStream bis = new BufferedInputStream(fis);
@@ -138,7 +131,6 @@ public class MqttBeans {
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
 
             int count = 0;
-            // CA certificate is used to authenticate server
             KeyStore caKs = KeyStore.getInstance(KeyStore.getDefaultType());
             caKs.load(null);
 
@@ -154,7 +146,6 @@ public class MqttBeans {
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             tmf.init(caKs);
 
-            // finally, create SSL socket factoryt
             SSLContext context = SSLContext.getInstance("TLSv1.2");
             context.init(null, tmf.getTrustManagers(), null);
 
