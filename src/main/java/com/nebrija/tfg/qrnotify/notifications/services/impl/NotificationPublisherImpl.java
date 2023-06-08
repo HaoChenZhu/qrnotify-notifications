@@ -54,7 +54,7 @@ public class NotificationPublisherImpl implements NotificationPublisher {
     @Override
     public ApiTurnResponseDto activateTurn() {
         try {
-            if (turnMongoRepository.existsTurnToDayAndUser(authUserService.getCurrentUser())) {
+            if (turnMongoRepository.existsTurnToDayAndUser(authUserService.getCurrentUser()) != null) {
                 throw new IllegalArgumentException("Ya existe un turno activo para el usuario actual");
             }
             ApiTopicResponseDto apiTopicResponseDto = topicClientImpl.getTopicByOwner(authUserService.getCurrentUser());
@@ -75,8 +75,8 @@ public class NotificationPublisherImpl implements NotificationPublisher {
 
     @Override
     public ApiTurnResponseDto passTurn() {
-        String user = authUserService.getCurrentUser();
-        Turn turn = turnMongoRepository.findByCreatedBy(user);
+        String admin = authUserService.getCurrentUser();
+        Turn turn = turnMongoRepository.existsTurnToDayAndUser(admin);
 
         if (turn == null) {
             throw new ApiResourceNotFoundException("No existe turno activo");
@@ -99,6 +99,10 @@ public class NotificationPublisherImpl implements NotificationPublisher {
         if (nextClientTurn != null) {
             updateTurnStatusAndSaveInList(clientTurnList, nextClientTurn, Constants.STATUS.EN_CURSO.toString());
             turn.setCurrentTurn(nextClientTurn.getTurnNumber());
+            ApiUserResponseDto apiUserResponseDto = adminClientImpl.getUserById(nextClientTurn.getClientId());
+            if(apiUserResponseDto.getPhoneNumber() != null){
+                smService.sendSms(apiUserResponseDto.getPhoneNumber(), "Pronto sera su turno");
+            }
         }
 
         turn.setClientTurnList(clientTurnList);
@@ -111,6 +115,8 @@ public class NotificationPublisherImpl implements NotificationPublisher {
             mqttService.publish(apiTurnResponseDto.getTopic(), json, 1, 1000L);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new ServerErrorException(e.getMessage());
         }
 
         return apiTurnResponseDto;

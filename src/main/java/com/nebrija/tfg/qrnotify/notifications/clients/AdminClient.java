@@ -16,5 +16,8 @@ public interface AdminClient {
 
     @GetMapping("/user")
     List<ApiUserResponseDto> getAllUsers();
+
+    @GetMapping("/user/{identifier}")
+    ApiUserResponseDto getUserById(@PathVariable String identifier);
 }
 

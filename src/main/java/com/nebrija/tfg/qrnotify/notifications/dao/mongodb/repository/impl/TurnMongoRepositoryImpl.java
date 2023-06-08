@@ -51,9 +51,9 @@ public class TurnMongoRepositoryImpl implements TurnMongoRepository {
     }
 
     @Override
-    public boolean existsTurnToDayAndUser(String createdBy) {
+    public Turn existsTurnToDayAndUser(String createdBy) {
         LocalDate currentDate = LocalDate.now();
         Query query = new Query(Criteria.where("createdBy").is(createdBy).and("createdDate").gte(currentDate.atStartOfDay()).lt(currentDate.plusDays(1).atStartOfDay()));
-        return mongoTemplate.exists(query, Turn.class);
+        return mongoTemplate.findOne(query, Turn.class);
     }
 }
