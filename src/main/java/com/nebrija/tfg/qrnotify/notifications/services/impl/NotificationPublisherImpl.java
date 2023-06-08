@@ -17,6 +17,7 @@ import com.nebrija.tfg.qrnotify.notifications.services.AuthUserService;
 import com.nebrija.tfg.qrnotify.notifications.services.MqttService;
 import com.nebrija.tfg.qrnotify.notifications.services.NotificationPublisher;
 import com.nebrija.tfg.qrnotify.notifications.services.SmService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.nebrija.tfg.qrnotify.topic.model.api.ApiTopicResponseDto;
 
@@ -27,7 +28,11 @@ import org.springframework.stereotype.Service;
 
 import com.nebrija.tfg.qrnotify.notifications.constants.*;
 
+import static com.nebrija.tfg.qrnotify.notifications.constants.Constants.TURN_MESSAGE;
+import static com.nebrija.tfg.qrnotify.notifications.constants.Constants.TURN_MESSAGE_2;
+
 @Service
+@Slf4j
 public class NotificationPublisherImpl implements NotificationPublisher {
 
     @Autowired
@@ -100,8 +105,9 @@ public class NotificationPublisherImpl implements NotificationPublisher {
             updateTurnStatusAndSaveInList(clientTurnList, nextClientTurn, Constants.STATUS.EN_CURSO.toString());
             turn.setCurrentTurn(nextClientTurn.getTurnNumber());
             ApiUserResponseDto apiUserResponseDto = adminClientImpl.getUserById(nextClientTurn.getClientId());
-            if(apiUserResponseDto.getPhoneNumber() != null){
-                smService.sendSms(apiUserResponseDto.getPhoneNumber(), "Pronto sera su turno");
+            if (apiUserResponseDto.getPhoneNumber() != null) {
+                log.info("Enviando sms a {}", apiUserResponseDto.getPhoneNumber());
+                smService.sendSms(apiUserResponseDto.getPhoneNumber(), TURN_MESSAGE_2 + turn.getName());
             }
         }
 
@@ -176,7 +182,7 @@ public class NotificationPublisherImpl implements NotificationPublisher {
         turn.getClientTurnList().add(clientTurn);
         turnMongoRepository.save(turn);
 
-        smService.sendSms(userPhone, userTurnNumber + " en " + turn.getName());
+        smService.sendSms(userPhone, TURN_MESSAGE + userTurnNumber + " en " + turn.getName());
 
         return apiClientTurnResponseDto;
     }

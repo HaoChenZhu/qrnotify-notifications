@@ -22,7 +22,7 @@ public class SmServiceImpl implements SmService {
             Message.creator(
                     new com.twilio.type.PhoneNumber("+34" + to),
                     new com.twilio.type.PhoneNumber(environment.getProperty("twilio.phone_number")),
-                    TURN_MESSAGE + message).create();
+                     message).create();
         }catch (TwilioException e) {
             throw e;
         }

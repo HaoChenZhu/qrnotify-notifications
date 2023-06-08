@@ -74,7 +74,7 @@ public class ApiExceptionHandler {
         apiError.setDetails(MODULE_NAME);
         apiError.setRequestId(UUID.randomUUID().toString());
         apiErrorResponse.setError(apiError);
-        return new ResponseEntity<>(apiErrorResponse, HttpStatus.valueOf(ex.status()));
+        return new ResponseEntity<>(apiErrorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(value = MqttException.class)
