@@ -8,7 +8,7 @@ public class Constants {
 
     public static final String TURN_MESSAGE = "Su turno es el número: ";
 
-    public static final String TURN_MESSAGE_2 = "Pronto sera su turno. Por favor, acuda al puesto: ";
+    public static final String TURN_MESSAGE_2 = "Es su turno. Por favor, acuda al puesto: ";
 
 
     public enum STATUS {

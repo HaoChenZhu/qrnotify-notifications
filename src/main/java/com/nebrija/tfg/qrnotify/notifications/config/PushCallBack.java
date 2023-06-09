@@ -46,12 +46,12 @@ public class PushCallBack implements MqttCallback {
     @Override
     public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
         String message = new String(mqttMessage.getPayload(), StandardCharsets.UTF_8);
-        System.out.println("Message arrived 2: "+topic+" - "+message);
+        log.info("Message arrived 2: "+topic+" - "+message);
     }
 
     @Override
     public void deliveryComplete(IMqttToken iMqttToken) {
-        System.out.println("Delivery complete: "+iMqttToken.isComplete());
+        log.info("Delivery complete: "+iMqttToken.isComplete());
     }
 
     @Override
