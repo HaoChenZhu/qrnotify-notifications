@@ -164,7 +164,7 @@ public class NotificationPublisherImpl implements NotificationPublisher {
         String userTurnNumber = Integer.toString(turn.getNextTurnNumber());
         boolean isTurnNumberExists = turn.getClientTurnList().stream()
                 .peek(clientTurn -> System.out.println(clientTurn.getClientId()))
-                .anyMatch(clientTurn -> clientTurn.getClientId().equals(apiUserResponseDto.getId()));
+                .anyMatch(clientTurn -> clientTurn.getClientId().equals(apiUserResponseDto.getId()) && clientTurn.getStatus().equals(Constants.STATUS.PENDIENTE.name()));
 
         if (isTurnNumberExists) {
             System.out.println("El número de turno ya ha sido asignado");
