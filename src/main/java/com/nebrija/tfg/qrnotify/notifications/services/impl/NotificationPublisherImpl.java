@@ -178,13 +178,24 @@ public class NotificationPublisherImpl implements NotificationPublisher {
                 .createdDate(LocalDateTime.now())
                 .build();
         ApiClientTurnResponseDto apiClientTurnResponseDto = turnMapper.toDtoClient(clientTurn);
-
         turn.getClientTurnList().add(clientTurn);
+        calculateEstimatedTime(turn);
         turnMongoRepository.save(turn);
 
         smService.sendSms(userPhone, TURN_MESSAGE + userTurnNumber + " en " + turn.getName());
 
         return apiClientTurnResponseDto;
+    }
+
+    private void calculateEstimatedTime(Turn turn) {
+        List<ClientTurn> clientTurnList = turn.getClientTurnList();
+        int estimatedTime = 0;
+        for (ClientTurn clientTurn : clientTurnList) {
+            if (clientTurn.getStatus().equals(Constants.STATUS.PENDIENTE.name())) {
+                estimatedTime += 5;
+            }
+        }
+        turn.setEstimatedTime(estimatedTime);
     }
 
     @Override
